@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="ISO-8859-1">
+		<link rel="stylesheet" href="/css/home.css">
+		<title>Register</title>
+	</head>
+	<body>
+		
+		<header>
+			<h1>Budget Application</h1>
+		</header>
+		
+		<nav>
+			<h2><a href= "/">Home</a></h2>
+			<h2>About</h2>
+			<h2 th:if="${#authentication.getPrincipal() == 'anonymousUser'}" class="security-text"><a href= "/login">Login</a></h2>
+		</nav>
+	
+		<article>
+		  <div class="grid-item">
+		    	<form th:action="@{/user/newuser}" th:object="${user}" method="POST">
+		  		<div>
+		  			<label>Email</label>
+		  			<input th:field="*{email}"/>
+		  			<p th:each="error: ${#fields.errors('email')}"th:text="${error}">Email error</p>
+		  		</div>
+		  		<div>
+		  			<label>Username</label>
+		  			<input th:field="*{username}"/>
+		  			<p th:each="error: ${#fields.errors('username')}"th:text="${error}">Username error</p>
+		  		</div>
+		  		 <div>
+		  			<label>Password</label>
+		  			<input type="password" th:field="*{password}"/>
+		  			<p th:each="error: ${#fields.errors('password')}"th:text="${error}">Password error</p>
+		  		</div>
+		  		<button type="submit">Submit</button>
+		  	</form>
+		  </div>
+		</article>
+	
+	</body>
+</html>
