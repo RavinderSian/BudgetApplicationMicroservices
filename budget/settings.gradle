@@ -1,1 +1,3 @@
 rootProject.name = 'budget'
+include 'budget-service'
+include 'budget-rest'
