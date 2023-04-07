@@ -19,18 +19,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.personal.budget.model.Expense;
 import com.personal.budget.service.ExpenseService;
-import com.personal.budget.service.UserService;
 
 //@PreAuthorize("hasAuthority('USER')")
 @RestController
 public class ExpenseJsonController {
 	
 	private final ExpenseService service;
-	private final UserService userService;
+	//private final UserService userService;
 	
-	public ExpenseJsonController(ExpenseService service, UserService userService) {
+	public ExpenseJsonController(ExpenseService service) {
 		this.service = service;
-		this.userService = userService;
 	}
 	
 	@GetMapping("/delete/{id}")
@@ -44,9 +42,9 @@ public class ExpenseJsonController {
 	@PostMapping("/search")
 	public ResponseEntity<?> search(@RequestBody String searchString ,HttpServletRequest request) {
 		
-		Long userId = userService.findByUsername(request.getUserPrincipal().getName()).get().getId();
+		//Long userId = userService.findByUsername(request.getUserPrincipal().getName()).get().getId();
 
-		List<Expense> results = service.getSearchResults(userId, searchString);
+		List<Expense> results = service.getSearchResults(1L, searchString);
 		
 		return new ResponseEntity<>(results, HttpStatus.OK);
 	}
@@ -66,7 +64,7 @@ public class ExpenseJsonController {
 		
 		String loggedInUsername = request.getUserPrincipal().getName();
 		
-		newExpense.setUserId(userService.findByUsername(loggedInUsername).get().getId());
+		newExpense.setUserId(1L);
 		
 		try {
 			service.save(newExpense);

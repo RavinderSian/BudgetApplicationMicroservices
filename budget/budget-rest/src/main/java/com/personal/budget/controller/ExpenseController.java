@@ -17,28 +17,26 @@ import com.personal.budget.model.Expense;
 import com.personal.budget.model.ExpenseDTO;
 import com.personal.budget.model.User;
 import com.personal.budget.service.ExpenseService;
-import com.personal.budget.service.UserService;
 
 @Controller
 public class ExpenseController {
 	
 	private final ExpenseService service;
-	private final UserService userService;
+	//private final UserService userService;
 	
-	public ExpenseController(ExpenseService service, UserService userService) {
+	public ExpenseController(ExpenseService service) {
 		this.service = service;
-		this.userService = userService;
 	}
 	
 	@GetMapping("/budget")
 	public String budget(Model model, HttpServletRequest request) {
 		
-		if (request.getUserPrincipal() == null) {
-			model.addAttribute("expenses", new ArrayList<>());
-		} else {
-			Long userId = userService.findByUsername(request.getUserPrincipal().getName()).get().getId();
-			model.addAttribute("expenses", service.findExpensesByYearForUser(LocalDate.now().getYear(), userId));
-		}
+//		if (request.getUserPrincipal() == null) {
+//			model.addAttribute("expenses", new ArrayList<>());
+//		} else {
+			//Long userId = userService.findByUsername(request.getUserPrincipal().getName()).get().getId();
+			model.addAttribute("expenses", service.findExpensesByYearForUser(LocalDate.now().getYear(), 1L));
+//		}
 		
 		model.addAttribute("currentYear", LocalDate.now().getYear());
 		model.addAttribute("previousYear", LocalDate.now().getYear() - 1);
@@ -59,8 +57,8 @@ public class ExpenseController {
 	@GetMapping("/budget/{year}")
 	public String budgetForYear(@PathVariable Integer year, Model model, HttpServletRequest request) {
 		
-		Long userId = userService.findByUsername(request.getUserPrincipal().getName()).get().getId();
-		model.addAttribute("expenses", service.findExpensesByYearForUser(year, userId));
+		//Long userId = userService.findByUsername(request.getUserPrincipal().getName()).get().getId();
+		model.addAttribute("expenses", service.findExpensesByYearForUser(year, 1L));
 		
 		model.addAttribute("expense", new Expense());
 		model.addAttribute("currentYear", year);
