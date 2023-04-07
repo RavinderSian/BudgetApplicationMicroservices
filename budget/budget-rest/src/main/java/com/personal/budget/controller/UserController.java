@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -53,7 +51,7 @@ public class UserController {
 		
 		try {
 			userService.save(user);
-		} catch(DuplicateKeyException exception) {
+		} catch(Exception exception) {
 			
 			String exceptionMessage = exception.getMessage();
 			System.out.println(exceptionMessage);
@@ -63,9 +61,9 @@ public class UserController {
 			
 			return new ResponseEntity<>(field.concat(" has already been taken"), HttpStatus.BAD_REQUEST);
 		}
-		catch(DataAccessException exception) {
-			return new ResponseEntity<>("Currently down due to maintenance", HttpStatus.BAD_REQUEST);
-		}
+//		catch(Exception exception) {
+//			return new ResponseEntity<>("Currently down due to maintenance", HttpStatus.BAD_REQUEST);
+//		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
