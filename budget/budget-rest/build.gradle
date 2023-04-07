@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     implementation project(':budget-service')
+    implementation project(':budget-auth')
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
