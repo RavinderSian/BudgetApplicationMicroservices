@@ -29,6 +29,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         
     	http
+	    .authorizeRequests()
+	    .antMatchers("/expenses/**").hasAuthority("USER")
+	    .anyRequest().fullyAuthenticated()
+	    .and()
         .csrf().disable()
 		.formLogin() //no custom page so default is /login
 		.loginProcessingUrl("/performlogin") //url to submit the username and pw to

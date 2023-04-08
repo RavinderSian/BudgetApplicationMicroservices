@@ -3,6 +3,7 @@ package com.personal.budget.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -14,21 +15,28 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.personal.budget.model.Expense;
+import com.personal.budget.model.User;
 import com.personal.budget.service.ExpenseService;
+import com.personal.budget.service.UserService;
 
-//@PreAuthorize("hasAuthority('USER')")
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
+@RequestMapping("/expenses")
 public class ExpenseJsonController {
 	
 	private final ExpenseService service;
-	//private final UserService userService;
+	private final UserService userService;
 	
-	public ExpenseJsonController(ExpenseService service) {
+	public ExpenseJsonController(ExpenseService service, UserService userService) {
 		this.service = service;
+		this.userService = userService;
 	}
 	
 	@GetMapping("/delete/{id}")
@@ -42,14 +50,13 @@ public class ExpenseJsonController {
 	@PostMapping("/search")
 	public ResponseEntity<?> search(@RequestBody String searchString ,HttpServletRequest request) {
 		
-		//Long userId = userService.findByUsername(request.getUserPrincipal().getName()).get().getId();
+		Long userId = userService.findByUsername(request.getUserPrincipal().getName()).get().getId();
 
-		List<Expense> results = service.getSearchResults(1L, searchString);
+		List<Expense> results = service.getSearchResults(userId, searchString);
 		
 		return new ResponseEntity<>(results, HttpStatus.OK);
 	}
 	
-	//@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("/addexpensejson")
 	public ResponseEntity<?> addExpenseJSON(@RequestBody @Valid Expense newExpense, BindingResult bindingResult,
 			HttpServletRequest request) {
@@ -64,7 +71,7 @@ public class ExpenseJsonController {
 		
 		String loggedInUsername = request.getUserPrincipal().getName();
 		
-		newExpense.setUserId(1L);
+		newExpense.setUserId(userService.findByUsername(loggedInUsername).get().getId());
 		
 		try {
 			service.save(newExpense);
@@ -74,6 +81,44 @@ public class ExpenseJsonController {
 		}
 		
 		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@GetMapping("/{username}")
+	public ResponseEntity<?> getExpensesForUser(@PathVariable String username, HttpServletRequest request,
+			 RedirectAttributes redirectAttributes) {
+		
+		Optional<User> userOptional = userService.findByUsername(username);
+		
+		if (userOptional.isEmpty()) {
+			log.error(String.format("User %s not found", username));
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		
+		List<Expense> expenses = service.findByUserId(userOptional.get().getId());
+		
+		if (expenses.isEmpty()) 
+				log.info(String.format("No expenses for user: %s", username));
+		
+		return new ResponseEntity<>(expenses, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{username}/{year}")
+	public ResponseEntity<?> getExpensesForUserAndYear(@PathVariable String username, @PathVariable String year, HttpServletRequest request,
+			 RedirectAttributes redirectAttributes) {
+		
+		Optional<User> userOptional = userService.findByUsername(username);
+		
+		if (userOptional.isEmpty()) {
+			log.error(String.format("User %s not found", username));
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		
+		List<Expense> expenses = service.findExpensesByYearForUser(Integer.valueOf(year) ,userOptional.get().getId());
+		
+		if (expenses.isEmpty()) 
+				log.info(String.format("No expenses for user: %s year: %s", username, year));
+		
+		return new ResponseEntity<>(expenses, HttpStatus.OK);
 	}
 
 }
