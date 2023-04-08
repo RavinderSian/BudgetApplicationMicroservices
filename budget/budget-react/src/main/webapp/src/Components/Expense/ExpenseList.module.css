@@ -1,0 +1,10 @@
+.budget-list {
+  margin-left: 40px;
+  padding-left: 5px;
+  display: grid;
+  border: 2px solid blue;
+  border-radius: 10px;
+  background-color: #8ce99a;
+  grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 1fr 1fr;
+  margin-bottom: 10px;
+}

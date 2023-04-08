@@ -1,0 +1,21 @@
+@charset "ISO-8859-1";
+
+.hidden {
+  display: none;
+}
+
+.hidden-opacity-collapse {
+  opacity: 0;
+  height: 0;
+}
+
+.add-expense-form {
+  display: grid;
+  justify-items: center;
+  border: 2px solid blue;
+}
+
+.expense-input {
+  display: block;
+  border-radius: 10px;
+}

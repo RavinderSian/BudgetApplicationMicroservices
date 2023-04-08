@@ -1,0 +1,20 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.9'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "com.github.node-gradle.node" version "3.1.1"
+}
+
+repositories {
+	mavenCentral()
+}
+
+task buildClient(type:NpmTask, dependsOn: 'npmInstall') {
+	group = 'build'
+	description =  'Compile react code'
+	args = ['npm', 'install']
+}
+
+dependencies {
+    implementation project(':expenses-rest')
+}

@@ -1,0 +1,84 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot'
+	id "com.github.node-gradle.node"
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+
+repositories {
+	mavenCentral()
+}
+
+node {
+	
+	//Node version
+	//NPM is bundled with node so we do not need to specify an NPM version
+	version = '19.8.1'
+	
+	
+	//If true will download node with the above parameters
+	//If false, it will try to use globally installed node.
+	download = true
+	
+	//This is the work dir for unpacking node
+	//Node gets downloaded into this folder
+	workDir = file("${project.projectDir}/src/main/webapp/nodejs")
+	
+	npmWorkDir = file("${project.projectDir}/src/main/webapp/npm")
+	
+	nodeModulesDir = file("${project.projectDir}/src/main/webapp")
+	
+	
+}
+
+
+//This is a custom task
+task npmInstallDependencies(type: NpmTask) {
+	dependsOn 'npmSetup'
+	execOverrides {
+		it.ignoreExitValue = true
+		it.workingDir = "src/main/webapp"
+	}
+	//This is the same as running npm run build in a console
+	args = ['install']
+}
+
+
+task npmBuild(type: NpmTask) {
+	//dependsOn means when we try to run this task
+	//npmInstallDependencies is run first
+	dependsOn 'npmInstallDependencies'
+	execOverrides {
+		it.workingDir = "src/main/webapp"
+	}
+	//This is the same as running npm run build in a console
+	args = ['run', 'build']
+}
+
+task copyWebappToBuild(type: Copy) {
+	dependsOn 'npmBuild'
+	from "$projectDir/src/main/webapp/build/"
+	//Anything in the static folder is exposed as plain HTML
+	into "$buildDir/resources/main/static"
+
+}
+
+processResources {
+	dependsOn 'copyWebappToBuild'
+}
+
+springBoot {
+	mainClass = "com.personal.budget.BudgetApplication"
+}
+
+dependencies {
+
+	implementation project(':budget-rest')
+	implementation project(':budget-auth')
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
+	
+}

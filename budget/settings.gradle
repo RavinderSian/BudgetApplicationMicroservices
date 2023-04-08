@@ -1,4 +1,13 @@
+pluginManagement {
+	plugins {
+		id 'java'
+		id 'org.springframework.boot' version '2.7.9'
+		id "com.github.node-gradle.node" version "3.1.1"
+	}
+}
+
 rootProject.name = 'budget'
 include 'budget-service'
 include 'budget-rest'
 include 'budget-auth'
+include 'budget-react'
