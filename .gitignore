@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### React project ###
-/build/
+budget/budget-react/src/main/webapp/build/
