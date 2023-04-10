@@ -38,3 +38,4 @@ out/
 
 ### React project ###
 budget/budget-react/src/main/webapp/build/
+budget/budget-react/src/main/webapp/node_modules/.cache
