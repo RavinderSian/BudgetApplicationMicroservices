@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Expense from "./Expense";
 import ExpenseTotal from "./ExpenseTotal";
-import classes from "./ExpenseList.module.css";
 
 // const DUMMY_EXPENSE = [
 //   {
